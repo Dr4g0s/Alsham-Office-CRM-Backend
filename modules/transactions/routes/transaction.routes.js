@@ -2,7 +2,7 @@ const { addTransaction,getAllTransactions, updateTransaction } = require('../con
 
 const transactionsRoutes=require('express').Router()
 
-transactionsRoutes.get('/allTransactions',getAllTransactions) 
+transactionsRoutes.post('/allTransactions',getAllTransactions) 
 transactionsRoutes.post('/addTransaction',addTransaction)
 transactionsRoutes.put('/updateTransaction/:id',updateTransaction)
 // transactionsRoutes.delete('/deleteTransaction/:id',deleteTransaction)
