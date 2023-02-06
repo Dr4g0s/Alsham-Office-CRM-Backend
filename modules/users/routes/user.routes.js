@@ -11,7 +11,6 @@ userRoutes.put('/updateUser/:id',updateUser);
 userRoutes.post('/addUser',validateRequest(addUserSchema),addUser);
 userRoutes.get('/getSingleUser/:id',getSingleUser)
 userRoutes.get('/searchUser',search)
-userRoutes.get('/getUser2030',getUser2030)
 
 
 module.exports=userRoutes;

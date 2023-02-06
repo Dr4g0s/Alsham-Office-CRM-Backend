@@ -17,6 +17,10 @@ const User=sequelize.define("user",{
     password: {
         type: Sequelize.STRING,
       },
+      role : {
+        type :Sequelize.INTEGER,
+        defaultValue : 1
+      },
       active:{
         type: Sequelize.BOOLEAN,
         defaultValue: true,

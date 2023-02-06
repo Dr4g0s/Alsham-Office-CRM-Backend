@@ -7,20 +7,28 @@ const { StatusCodes } = require("http-status-codes");
 
 // get all users
 const getAllUsers=async(req,res)=>{
-  const users=await  User.findAndCountAll({include:Customer});
-  res.json({message:"succes",users})
+    try {
+        const users=await  User.findAndCountAll({include:Customer});
+        res.status(StatusCodes.OK).json({message:"succes",users})
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    }
+
 }
 
 // delete  user
 const deleteUser=async(req,res)=>{
-    let id=req.params.id
-    await User.destroy({
-        where :{
-            id
-        },
-    })
-    res.json({message:"success"})
-
+   try{
+        let id=req.params.id
+        await User.destroy({
+            where :{
+                id
+            },
+        })
+        res.status(StatusCodes.OK).json({message:"success"})
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    }
 }
 
 // add user
@@ -39,50 +47,50 @@ const addUser=async(req,res)=>{
             })
         }
     } catch (error) {
-        res.json({message : 'error' , error})
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
 // update user
 const updateUser=async(req,res)=>{
-    let id=req.params.id;
-    let {name}=req.body;
-    await User.update({name},{where:{id}})
-    res.json({message:"success"})
+   try {
+        let id=req.params.id;
+        let {name}=req.body;
+        await User.update({name},{where:{id}})
+        res.status(StatusCodes.OK).json({message:"success"})
+   } catch (error) {
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    
+   }
 }
-
-// const updateUser=async (req,res)=>{
-
-//     await User.update(req.body , {where:{id:req.params.id}})
-//     res.json({message:"updated success"})
-// }
 
 // get single user
 const getSingleUser=async(req,res)=>{
-    let id=req.params.id;
-   let user=await User.findOne({where:{id}});
-   res.json({message:"success",user});
+    try {
+        let id=req.params.id;
+        let user=await User.findOne({where:{id}});
+        res.status(StatusCodes.OK).json({message:"success",user});
+   } catch (error) {
+         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+   }
+   
 }
 // search
 const search=async(req,res)=>{
-    let {searchKey}=req.query;
-    if(searchKey){
-      let users= await User.findAll({where:{name:{[Op.like]: `%${searchKey}%`}}});
-        res.json({message:"success",users})
-    }else{
-       let users= await User.findAll({});
-       res.json({message:"success",users})
-    }
-}
-// get user their age between 20 : 30
-const getUser2030=async(req,res)=>{
-
-    let users=await User.findAll({
-        where:{
-            age:{[Op.between]:[20,30]}
+    try{
+        let {searchKey}=req.query;
+        if(searchKey){
+          let users= await User.findAll({where:{name:{[Op.like]: `%${searchKey}%`}}});
+            res.status(StatusCodes.OK).json({message:"success",users})
+        }else{
+           let users= await User.findAll({});
+           res.status(StatusCodes.OK).json({message:"success",users})
         }
-    })
-    res.json({message:"success",users})
+        
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    }
+
 }
 
-module.exports={getAllUsers,deleteUser,addUser,updateUser,getSingleUser,search,getUser2030}
+module.exports={getAllUsers,deleteUser,addUser,updateUser,getSingleUser,search}

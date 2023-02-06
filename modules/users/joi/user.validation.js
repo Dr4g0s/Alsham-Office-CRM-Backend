@@ -9,7 +9,8 @@ module.exports = {
             email : Joi.string().email().messages({
                 "string.email":"sorry ...please enter valid email"
             }),
-            password :Joi.string().min(6).required()
+            password :Joi.string().min(6).required(),
+            role : Joi.number().default(1)
         })
     }
 } 
