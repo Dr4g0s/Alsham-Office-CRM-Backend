@@ -23,5 +23,10 @@ const User=sequelize.define("user",{
     }
 })
 
+// Hook before create user to hash password
+User.beforeCreate(async (user, options) => {
+  console.log("hoooooooooks " , user.email );   
+});
+
 
 module.exports=User;

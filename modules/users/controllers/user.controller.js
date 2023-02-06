@@ -1,6 +1,9 @@
 const User = require("../model/user.model");
 const {Op}=require("sequelize");
 const Customer = require("../../customers/model/customer.model");
+const bcrypt = require('bcrypt')
+const { StatusCodes } = require("http-status-codes");
+
 
 // get all users
 const getAllUsers=async(req,res)=>{
@@ -22,8 +25,22 @@ const deleteUser=async(req,res)=>{
 
 // add user
 const addUser=async(req,res)=>{
-   var result= await User.create(req.body)
-    res.json({message:"success",result})
+    const {password} = req.body
+    try {
+        const user= await  User.findOne({where:{email:req.body.email}});
+        if (user) {
+            res.status(StatusCodes.BAD_REQUEST).json({message:"email is exit"})
+        } else {
+            bcrypt.hash(password,7, async (err,hash)=>{
+                if(err) throw err
+        
+                var result= await User.create({...req.body , password:hash})
+                 res.status(StatusCodes.CREATED).json({message:"success",result})
+            })
+        }
+    } catch (error) {
+        res.json({message : 'error' , error})
+    }
 }
 
 // update user

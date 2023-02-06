@@ -2,7 +2,7 @@ const User = require("../../users/model/user.model");
 const Customer = require("../../customers/model/customer.model");
 const Service = require("../../services/model/service.model");
 const Transaction = require("../model/transaction.model");
-const { Op } = require("sequelize");
+const { Op , Sequelize} = require("sequelize");
 
 /*const getAllMainFields = async (req, res) => {
     const { body } = req
@@ -46,13 +46,14 @@ const { Op } = require("sequelize");
     return appConfig.send(res, 'ok', mainFields);
 } 
 {"limit":2,"offset":0,"customer_id":1,"admin_id":1} */
+
 const getAllTransactions=async(req,res)=>{
     const indexInputs =  req.body ;
     const filterObj = {
         where: {},
         limit: indexInputs.limit || 10,
     }
-    if (indexInputs.offset) {
+    if (indexInputs.offset) { 
         filterObj['offset'] = indexInputs.offset * filterObj.limit;
     }
     if (indexInputs.orderBy) {
@@ -61,6 +62,7 @@ const getAllTransactions=async(req,res)=>{
         ];
     }
     if(indexInputs.customer_id !=undefined){
+        console.log("teeeeeeeeeestbjhsbk shd sdh" ,indexInputs.customer_id );
         filterObj.where.customer_id = indexInputs.customer_id 
     }
     if(indexInputs.admin_id !=undefined){
@@ -81,6 +83,13 @@ const getAllTransactions=async(req,res)=>{
                     {model:Customer,attributes: ['name', "id"]},
                     {model:Service,attributes: ['name', "id","desc"]}
                 ]
+        // , attributes: [[Sequelize.fn('min', Sequelize.col('price')), 'minPrice']],
+        // ,attributes: [ [Sequelize.fn('sum', Sequelize.col('profite')), 'total profite']],
+        // group : ['Transaction.customer_id'],
+        // group : ['Transaction.active'],
+        // raw: true,
+        // order: Sequelize.literal('total DESC')
+               
         
     })
     res.json({message:"success",result:transactions})
