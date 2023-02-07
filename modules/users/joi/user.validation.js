@@ -18,5 +18,17 @@ module.exports = {
             email : Joi.string().email().required(),
             password :Joi.string().required()
         })
+    },
+    updateUserSchema:{
+        body:Joi.object().required().keys({
+            name : Joi.string().min(3).messages({
+                "string.empty":"sorry ...name is required"
+            }),
+            email : Joi.string().email().messages({
+                "string.email":"sorry ...please enter valid email"
+            }),
+            password :Joi.string().min(6),
+            role : Joi.number().default(1)
+        }).min(1)
     }
 } 

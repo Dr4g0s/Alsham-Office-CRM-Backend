@@ -7,6 +7,7 @@ const servicesRoutes = require("./modules/services/routes/service.routes");
 const transactionsRoutes = require("./modules/transactions/routes/transaction.routes");
 const User = require("./modules/users/model/user.model");
 const userRoutes = require("./modules/users/routes/user.routes");
+const cookieParser=require('cookie-parser')
 
  const app =express();
 app.use(express.json());
@@ -21,8 +22,7 @@ app.use(express.json());
     User.hasMany(Customer,{
         foreignKey :'admin_id'
     })
-
-  
+    app.use(cookieParser());
 createTable();
 const port=process.env.PORT ;
 app.use(userRoutes);
