@@ -12,5 +12,11 @@ module.exports = {
             password :Joi.string().min(6).required(),
             role : Joi.number().default(1)
         })
+    },
+    loginSchema : {
+        body:Joi.object().required().keys({
+            email : Joi.string().email().required(),
+            password :Joi.string().required()
+        })
     }
 } 
