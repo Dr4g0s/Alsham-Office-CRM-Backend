@@ -5,8 +5,18 @@ const bcrypt = require('bcrypt')
 const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 
+
+function  catchAsyncError(fun){
+    return (req,res,next)=>{
+        fun(req,res).catch(err=>{
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , err})
+        })
+    }
+}
+
+
 // get all users
-const getAllUsers=async(req,res)=>{
+const getAllUsers=catchAsyncError(async(req,res)=>{
     try {
         const users=await  User.findAndCountAll({
             include:Customer,
@@ -17,7 +27,7 @@ const getAllUsers=async(req,res)=>{
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 
-}
+}) 
 
 // delete  user
 const deleteUser=async(req,res)=>{
@@ -71,7 +81,6 @@ const search=async(req,res)=>{
            let users= await User.findAll({});
            res.status(StatusCodes.OK).json({message:"success",users})
         }
-        
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
@@ -87,7 +96,6 @@ const addUser=async(req,res)=>{
         } else {
             bcrypt.hash(password,7, async (err,hash)=>{
                 if(err) throw err
-        
                 var result= await User.create({...req.body , password:hash})
                  res.status(StatusCodes.CREATED).json({message:"success",result})
             })

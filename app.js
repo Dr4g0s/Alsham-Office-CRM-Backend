@@ -29,6 +29,11 @@ app.use(userRoutes);
 app.use(customersRoutes);
 app.use(servicesRoutes);
 app.use(transactionsRoutes);
+
+// global error handling middleware
+app.use((error , req ,res , next)=>{
+    res.status(400).json(err)
+})
 app.listen(port, () => {   
     console.log(`Server started on port ${port}`);
 });
