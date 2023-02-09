@@ -1,18 +1,20 @@
 const User = require("../../users/model/user.model");
 const Customer = require("../model/customer.model");
 const { StatusCodes } = require("http-status-codes");
+const AppError = require("../../../helpers/AppError");
 
-const getAllCustomers=async(req,res)=>{
+const getAllCustomers=async(req,res,next)=>{
         try{
             var customers=await Customer.findAndCountAll({ where:{company_id:req.loginData.company_id},include:User})
             res.status(StatusCodes.OK).json({message:"success",result:customers})
 
         } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+           next(new AppError('error server ',500))
+            // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
         }
 }
 
-const addCustomer=async (req,res)=>{
+const addCustomer=async (req,res,next)=>{
     try{
         const customer= await  Customer.findOne({where:{name:req.body.name}});
         if (customer) {
@@ -21,21 +23,23 @@ const addCustomer=async (req,res)=>{
         var customercreated = await Customer.create(req.body);
         res.status(StatusCodes.CREATED).json({message:"success",result:customercreated})}
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+       next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const updateCustomer= async (req,res)=>{
+const updateCustomer= async (req,res,next)=>{
     try{
         const id =req.params.id
         var customer =await Customer.update(req.body,{where:{id}})
         res.status(StatusCodes.OK).json({message:"success",result:customer})
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+       next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const deleteCustomer= async (req,res)=>{
+const deleteCustomer= async (req,res,next)=>{
     try{
             const id=req.params.id ;
             var customer =await Customer.destroy({
@@ -45,12 +49,13 @@ const deleteCustomer= async (req,res)=>{
             })
             res.status(StatusCodes.OK).json({message:"success",result:customer})
         } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+           next(new AppError('error server ',500))
+            // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
         }
 }
 
 // search
-const searchCustomers=async(req,res)=>{
+const searchCustomers=async(req,res,next)=>{
     try{
         let {searchKey}=req.query;
         if(searchKey){
@@ -62,7 +67,8 @@ const searchCustomers=async(req,res)=>{
         }
         
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+       next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 

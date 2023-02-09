@@ -4,10 +4,11 @@ const Service = require("../../services/model/service.model");
 const Transaction = require("../model/transaction.model");
 const { Op , Sequelize} = require("sequelize");
 const { StatusCodes } = require("http-status-codes");
+const AppError = require("../../../helpers/AppError");
 
 
 
-const getAllTransactions=async(req,res)=>{
+const getAllTransactions=async(req,res,next)=>{
     const indexInputs =  req.body ;
     const filterObj = {
         where: {company_id:req.loginData.company_id},
@@ -74,11 +75,12 @@ const getAllTransactions=async(req,res)=>{
         })
         res.status(StatusCodes.OK).json({message:"success",result:transactions,allProfite:transactionsInfo})
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const addTransaction=async (req,res)=>{ 
+const addTransaction=async (req,res,next)=>{ 
     try{
         if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
             var transaction = await Transaction.create(req.body);
@@ -88,16 +90,18 @@ const addTransaction=async (req,res)=>{
         }
         
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const updateTransaction= async (req,res)=>{
+const updateTransaction= async (req,res,next)=>{
     try{
         const id =req.params.id
         var transaction =await Transaction.findOne({where:{id}})
         if (!transaction)
-            res.status(StatusCodes.BAD_REQUEST).json({message:"this id not valid"}) 
+            next(new AppError("this id not valid",400))
+            // res.status(StatusCodes.BAD_REQUEST).json({message:"this id not valid"}) 
 
             if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
 
@@ -107,16 +111,18 @@ const updateTransaction= async (req,res)=>{
                 res.status(StatusCodes.BAD_REQUEST).json({message:"invalid data of payamount and balance"}) 
             }
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const deleteTransaction= async (req,res)=>{
+const deleteTransaction= async (req,res,next)=>{
    try {
         const id=req.params.id ;
         var transaction =await Transaction.findOne({where:{id}})
         if (!transaction)
-            res.status(StatusCodes.BAD_REQUEST).json({message:"this id not valid"}) 
+            next(new AppError("this id not valid",400))
+            // res.status(StatusCodes.BAD_REQUEST).json({message:"this id not valid"}) 
 
         var transactioDeleted =await Transaction.update({active:false},{
             where :{
@@ -125,7 +131,8 @@ const deleteTransaction= async (req,res)=>{
         })
         res.status(StatusCodes.OK).json({message:"success",result:transactioDeleted})
    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    next(new AppError('error server ',500))    
+    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
    }
 }
 

@@ -4,35 +4,37 @@ const Customer = require("../../customers/model/customer.model");
 const bcrypt = require('bcrypt')
 const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
+const AppError = require("../../../helpers/AppError");
+const { catchAsyncError } = require("../../../helpers/catchSync");
 
-
-function  catchAsyncError(fun){
-    return (req,res,next)=>{
-        fun(req,res).catch(err=>{
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , err})
-        })
-    }
-}
+// function  catchAsyncError(fun){
+//     return (req,res,next)=>{
+//         fun(req,res,next).catch(err=>{
+//             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'server error' , err,stack:err.stack})
+//         })
+//     }
+// }
 
 
 // get all users
-const getAllUsers=catchAsyncError(async(req,res)=>{
-    try {
-        const users=await  User.findAndCountAll({
+const getAllUsers=catchAsyncError(async(req,res,next)=>{
+    // try {
+        const users=await  User.findAndrrCountAll({
             where:{company_id:req.loginData.company_id},
             include:Customer,
             attributes : {exclude : ['password']}
         });
         res.status(StatusCodes.OK).json({message:"succes",users})
-    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
+    // } catch (error) {
+    //     next(new AppError('server Error',500))
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
 
 }) 
 
 // delete  user
-const deleteUser=async(req,res)=>{
-   try{
+const deleteUser=catchAsyncError(async(req,res,next)=>{
+//    try{
         let id=req.params.id
         await User.destroy({
             where :{
@@ -40,40 +42,43 @@ const deleteUser=async(req,res)=>{
             },
         })
         res.status(StatusCodes.OK).json({message:"success"})
-    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
-}
+    // } catch (error) {
+    //     next(new AppError('server Error',500))
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
+})
 
 
 
 // update user
-const updateUser=async(req,res)=>{
-   try {
+const updateUser=catchAsyncError(async(req,res,next)=>{
+//    try {
         let id=req.params.id;
         let {name}=req.body;
         await User.update({name},{where:{id}})
         res.status(StatusCodes.OK).json({message:"success"})
-   } catch (error) {
-         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+//    } catch (error) {
+//         next(new AppError('server Error',500))    
+//     //  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     
-   }
-}
+//    }
+})
 
 // get single user
-const getSingleUser=async(req,res)=>{
-    try {
+const getSingleUser=catchAsyncError(async(req,res,next)=>{
+    // try {
         let id=req.params.id;
         let user=await User.findOne({where:{id}});
         res.status(StatusCodes.OK).json({message:"success",user});
-   } catch (error) {
-         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-   }
+//    } catch (error) {
+//         next(new AppError('server Error',500))    
+//     //  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+//    }
    
-}
+})
 // search
-const search=async(req,res)=>{
-    try{
+const search=catchAsyncError(async(req,res,next)=>{
+    // try{
         let {searchKey}=req.query;
         if(searchKey){
           let users= await User.findAll({where:{name:{[Op.like]: `%${searchKey}%`,company_id:req.loginData.company_id}}});
@@ -82,15 +87,16 @@ const search=async(req,res)=>{
            let users= await User.findAll({});
            res.status(StatusCodes.OK).json({message:"success",users})
         }
-    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
+    // } catch (error) {
+    //     next(new AppError('server Error',500))
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
 
-}
+})
 // add user
-const addUser=async(req,res)=>{
+const addUser=catchAsyncError(async(req,res,next)=>{
     const {password} = req.body
-    try {
+    // try {
         const user= await  User.findOne({where:{email:req.body.email}});
         if (user) {
             res.status(StatusCodes.BAD_REQUEST).json({message:"email is exit"})
@@ -101,16 +107,17 @@ const addUser=async(req,res)=>{
                  res.status(StatusCodes.CREATED).json({message:"success",result})
             })
         }
-    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
-}
+    // } catch (error) {
+    //     next(new AppError('server Error',500))
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
+})
 // login
-const login =async(req,res)=>{
+const login =catchAsyncError(async(req,res,next)=>{
     const {email , password} = req.body ;
-    try {
+    // try {
         console.log(email);
-        const user= await User.findOne({where:{email : email}})
+        const user= await User.findssOne({where:{email : email}})
         if (user) {
            const match= await bcrypt.compare(password ,user.password);
            
@@ -120,15 +127,18 @@ const login =async(req,res)=>{
             res.status(StatusCodes.OK).json({match,token,decode})
 
            } else {
-            res.status(StatusCodes.FORBIDDEN).json({message:"password wrong",match,user,passing:req.body})
+            next(new AppError('password wrong',403))
+            // res.status(StatusCodes.FORBIDDEN).json({message:"password wrong",match,user,passing:req.body})
            }
 
         } else {
-            res.status(StatusCodes.BAD_REQUEST).json({message:"email not found"})
+            next(new AppError('email not found',400))
+            // res.status(StatusCodes.BAD_REQUEST).json({message:"email not found"})
         }
-    } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"error",error})
-    }
-} 
-``
+    // } catch (error) {
+    //        next(new AppError(' server error',500)) 
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"error",error})
+    // }
+})
+
 module.exports={getAllUsers,deleteUser,addUser,updateUser,getSingleUser,search , login}

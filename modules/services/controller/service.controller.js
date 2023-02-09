@@ -1,37 +1,44 @@
 const Service = require("../model/service.model");
 const { StatusCodes } = require("http-status-codes");
+const AppError = require("../../../helpers/AppError");
 
-const getAllservices=async(req,res)=>{
+const getAllservices=async(req,res,next)=>{
     try {
         var services=await Service.findAndCountAll()
         res.status(StatusCodes.OK).json({message:"success",result:services})
         
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const addService=async (req,res)=>{
+const addService=async (req,res,next)=>{
     try {
         var service = await Service.create(req.body);
         res.status(StatusCodes.CREATED).json({message:"success",result:service})
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
-const updateService= async (req,res)=>{
+const updateService= async (req,res,next)=>{
     try {
-        const id =req.params.id
+        const id =req.params?.id
         var service =await Service.update(req.body,{where:{id}})
+        if (!service)
+        next(new AppError("this id not valid",400))
+
         res.status(StatusCodes.OK).json({message:"success",result:service})
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
     
 }
 
-const deleteService= async (req,res)=>{
+const deleteService= async (req,res,next)=>{
    try {
         const id=req.params.id ;
         var service =await Service.destroy({
@@ -39,14 +46,18 @@ const deleteService= async (req,res)=>{
                 id
             },
         })
+        if (!service)
+        next(new AppError("this id not valid",400))
+
         res.status(StatusCodes.OK).json({message:"success",result:service})
    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    next(new AppError('error server ',500))    
+    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
    }
 }
 
 // search
-const searchservices=async(req,res)=>{
+const searchservices=async(req,res,next)=>{
     try {
             let {searchKey}=req.query;
             if(searchKey){
@@ -57,7 +68,8 @@ const searchservices=async(req,res)=>{
             res.status(StatusCodes.OK).json({message:"success",services})
             }
     } catch (error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+        next(new AppError('error server ',500))    
+        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     }
 }
 
