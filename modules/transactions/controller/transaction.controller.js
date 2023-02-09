@@ -16,11 +16,11 @@ const getAllTransactions=async(req,res)=>{
     if (indexInputs.offset) { 
         filterObj['offset'] = indexInputs.offset * filterObj.limit;
     }
-    if (indexInputs.orderBy) {
+    // if (indexInputs.orderBy) {
         filterObj['order'] = [
-            [indexInputs.orderBy.coulmn, indexInputs.orderBy.type],
+            [indexInputs?.orderBy?.coulmn|| 'createdAt', indexInputs?.orderBy?.type || 'DESC'],
         ];
-    }
+    // }
     if(indexInputs.customer_id !=undefined){
         filterObj.where.customer_id = indexInputs.customer_id 
     }
