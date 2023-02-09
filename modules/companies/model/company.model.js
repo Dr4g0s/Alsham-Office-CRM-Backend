@@ -1,8 +1,9 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../../configrations/sequelize");
+const Transaction = require("../../transactions/model/transaction.model");
 const User = require("../../users/model/user.model");
 
-const Customer =sequelize.define('customer',{
+const Company =sequelize.define('company',{
     id:{
         type:Sequelize.INTEGER,
         autoIncrement: true,
@@ -11,23 +12,14 @@ const Customer =sequelize.define('customer',{
     name:{
         type:Sequelize.STRING,
         allowNull: false ,
-    },
-    email:{
-        type:Sequelize.STRING,
-        allowNull:true ,
-        unique : true
-    },
-    phoneNo:{
-        type:Sequelize.INTEGER ,
-        unique : true
+        unique: true
     },
     active:{
         type: Sequelize.BOOLEAN,
         defaultValue: true,
     }
 });
-    Customer.belongsTo(User, {  
-        foreignKey: 'admin_id',
-      });
 
-module.exports=Customer ;
+
+
+module.exports=Company ;

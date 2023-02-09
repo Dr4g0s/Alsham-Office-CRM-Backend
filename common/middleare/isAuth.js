@@ -3,14 +3,12 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (authRole="ALL")=>{
     return (req,res,next)=>{
-        console.log(req.headers.authorization);
-        console.log(req.get('authorization'));  
-        const token= req.headers.authorization.split(" ")[1]
+        const token= req.headers?.authorization?.split(" ")[1]
         if (token) {
             try {
-                const {id,role}=jwt.verify(token,'alsham2332')
+                const {id,role , company_id}=jwt.verify(token,'alsham2332')
                 if (id) {
-                    req.loginData={id,role}
+                    req.loginData={id , role , company_id}
                     if (authRole == "ALL") {
                         next()     
                     } else {

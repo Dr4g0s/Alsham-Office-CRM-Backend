@@ -20,8 +20,5 @@ const Service =sequelize.define('service',{
         defaultValue: true,
     }
 });
-    // Customer.belongsTo(User, {
-    //     foreignKey: 'admin_id',
-    //   });
 
 module.exports=Service ;

@@ -20,6 +20,9 @@ module.exports = {
         })
     },
     updateUserSchema:{
+        params: Joi.object().required().keys({
+            id : Joi.number().required()
+        }),
         body:Joi.object().required().keys({
             name : Joi.string().min(3).messages({
                 "string.empty":"sorry ...name is required"
@@ -31,4 +34,4 @@ module.exports = {
             role : Joi.number().default(1)
         }).min(1)
     }
-} 
+}

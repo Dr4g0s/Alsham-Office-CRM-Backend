@@ -1,6 +1,7 @@
 const sequelize = require("../../../configrations/sequelize");
 const Sequelize=require("sequelize");
 const Customer = require("../../customers/model/customer.model");
+const Company = require("../../companies/model/company.model");
 const User=sequelize.define("user",{
     id:{
         type:Sequelize.INTEGER,
@@ -32,5 +33,8 @@ User.beforeCreate(async (user, options) => {
   console.log("hoooooooooks " , user.email );   
 });
 
+// User.belongsTo(Company, {
+//   foreignKey: 'company_id',
+// });
 
 module.exports=User;

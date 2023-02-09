@@ -19,6 +19,7 @@ function  catchAsyncError(fun){
 const getAllUsers=catchAsyncError(async(req,res)=>{
     try {
         const users=await  User.findAndCountAll({
+            where:{company_id:req.loginData.company_id},
             include:Customer,
             attributes : {exclude : ['password']}
         });
@@ -75,7 +76,7 @@ const search=async(req,res)=>{
     try{
         let {searchKey}=req.query;
         if(searchKey){
-          let users= await User.findAll({where:{name:{[Op.like]: `%${searchKey}%`}}});
+          let users= await User.findAll({where:{name:{[Op.like]: `%${searchKey}%`,company_id:req.loginData.company_id}}});
             res.status(StatusCodes.OK).json({message:"success",users})
         }else{
            let users= await User.findAll({});
@@ -114,7 +115,7 @@ const login =async(req,res)=>{
            const match= await bcrypt.compare(password ,user.password);
            
            if (match) {
-            var token =jwt.sign({email,id:user.id,name:user.name , role:user.role},'alsham2332',{expiresIn:'1h'}) ;
+            var token =jwt.sign({email,id:user.id,name:user.name , role:user.role , company_id:user.company_id},'alsham2332',{expiresIn:'4h'}) ;
             var decode=jwt.decode(token ,'alsham2332')
             res.status(StatusCodes.OK).json({match,token,decode})
 

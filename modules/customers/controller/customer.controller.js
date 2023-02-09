@@ -4,7 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 
 const getAllCustomers=async(req,res)=>{
         try{
-            var customers=await Customer.findAndCountAll({include:User})
+            var customers=await Customer.findAndCountAll({ where:{company_id:req.loginData.company_id},include:User})
             res.status(StatusCodes.OK).json({message:"success",result:customers})
 
         } catch (error) {
@@ -54,7 +54,7 @@ const searchCustomers=async(req,res)=>{
     try{
         let {searchKey}=req.query;
         if(searchKey){
-            let customers= await Customer.findAll({where:{name:{[Op.like]: `%${searchKey}%`}}});
+            let customers= await Customer.findAll({where:{name:{[Op.like]: `%${searchKey}%`,company_id:req.loginData.company_id}}});
             res.status(StatusCodes.OK).json({message:"success",customers})
         }else{
             let customers= await Customer.findAll({});

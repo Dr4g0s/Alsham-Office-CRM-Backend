@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../../configrations/sequelize");
+const Company = require("../../companies/model/company.model");
 const Customer = require("../../customers/model/customer.model");
 const Service = require("../../services/model/service.model");
 const User = require("../../users/model/user.model");
@@ -42,14 +43,17 @@ const Transaction =sequelize.define('transaction',{
         defaultValue: true,
     }
 });
-      Transaction.belongsTo(User, {
-        foreignKey: 'admin_id',
-      });
-      Transaction.belongsTo(Customer, {
-        foreignKey: 'customer_id',
-      });
-      Transaction.belongsTo(Service, {
-        foreignKey: 'service_id',
-      });
+      // Transaction.belongsTo(User, {
+      //   foreignKey: 'admin_id',
+      // });
+      // Transaction.belongsTo(Customer, {
+      //   foreignKey: 'customer_id',
+      // });
+      // Transaction.belongsTo(Service, {
+      //   foreignKey: 'service_id',
+      // });
+      // Transaction.belongsTo(Company, {
+      //   foreignKey: 'company_id',
+      // });
 
 module.exports=Transaction ;
