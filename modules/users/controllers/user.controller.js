@@ -10,7 +10,8 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 // function  catchAsyncError(fun){
 //     return (req,res,next)=>{
 //         fun(req,res,next).catch(err=>{
-//             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'server error' , err,stack:err.stack})
+//             next(err)
+//             //res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'server error' , err,stack:err.stack})
 //         })
 //     }
 // }
@@ -19,7 +20,7 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 // get all users
 const getAllUsers=catchAsyncError(async(req,res,next)=>{
     // try {
-        const users=await  User.findAndrrCountAll({
+        const users=await  User.findAndCountAll({
             where:{company_id:req.loginData.company_id},
             include:Customer,
             attributes : {exclude : ['password']}
@@ -36,6 +37,9 @@ const getAllUsers=catchAsyncError(async(req,res,next)=>{
 const deleteUser=catchAsyncError(async(req,res,next)=>{
 //    try{
         let id=req.params.id
+        var userX=await User.findOne({where:{id}})
+        if (userX)
+            next(new AppError('this id not exist ',400))
         await User.destroy({
             where :{
                 id
@@ -88,7 +92,6 @@ const search=catchAsyncError(async(req,res,next)=>{
            res.status(StatusCodes.OK).json({message:"success",users})
         }
     // } catch (error) {
-    //     next(new AppError('server Error',500))
     //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     // }
 
@@ -108,7 +111,6 @@ const addUser=catchAsyncError(async(req,res,next)=>{
             })
         }
     // } catch (error) {
-    //     next(new AppError('server Error',500))
     //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
     // }
 })
@@ -117,7 +119,7 @@ const login =catchAsyncError(async(req,res,next)=>{
     const {email , password} = req.body ;
     // try {
         console.log(email);
-        const user= await User.findssOne({where:{email : email}})
+        const user= await User.findOne({where:{email : email}})
         if (user) {
            const match= await bcrypt.compare(password ,user.password);
            
@@ -136,7 +138,6 @@ const login =catchAsyncError(async(req,res,next)=>{
             // res.status(StatusCodes.BAD_REQUEST).json({message:"email not found"})
         }
     // } catch (error) {
-    //        next(new AppError(' server error',500)) 
     //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"error",error})
     // }
 })

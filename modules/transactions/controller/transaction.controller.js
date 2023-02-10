@@ -5,10 +5,11 @@ const Transaction = require("../model/transaction.model");
 const { Op , Sequelize} = require("sequelize");
 const { StatusCodes } = require("http-status-codes");
 const AppError = require("../../../helpers/AppError");
+const { catchAsyncError } = require("../../../helpers/catchSync");
 
 
 
-const getAllTransactions=async(req,res,next)=>{
+const getAllTransactions=catchAsyncError(async(req,res,next)=>{
     const indexInputs =  req.body ;
     const filterObj = {
         where: {company_id:req.loginData.company_id},
@@ -38,7 +39,7 @@ const getAllTransactions=async(req,res,next)=>{
  
     filterObj.where.active = indexInputs.active? indexInputs.active : true
 
-    try {
+    // try {
         var transactions=await Transaction.findAndCountAll({
             ...filterObj
             ,include:[ {model:User,attributes: ['name', "id"]},
@@ -46,7 +47,6 @@ const getAllTransactions=async(req,res,next)=>{
                         {model:Service,attributes: ['name', "id","desc"]}
                     ]
         })
-       console.log(filterObj.where);
         var transactionsInfo=await Transaction.findAll({
           where: filterObj.where
             ,attributes: [ 
@@ -74,14 +74,13 @@ const getAllTransactions=async(req,res,next)=>{
             ],
         })
         res.status(StatusCodes.OK).json({message:"success",result:transactions,allProfite:transactionsInfo})
-    } catch (error) {
-        next(new AppError('error server ',500))
-        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
-}
+    // } catch (error) {
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
+})
 
-const addTransaction=async (req,res,next)=>{ 
-    try{
+const addTransaction=catchAsyncError(async (req,res,next)=>{ 
+    // try{
         if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
             var transaction = await Transaction.create(req.body);
             res.status(StatusCodes.CREATED).json({message:"success",result:transaction})
@@ -89,14 +88,13 @@ const addTransaction=async (req,res,next)=>{
             res.status(StatusCodes.BAD_REQUEST).json({message:"invalid data of payamount and balance"}) 
         }
         
-    } catch (error) {
-        next(new AppError('error server ',500))
-        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
-}
+    // } catch (error) {
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
+})
 
-const updateTransaction= async (req,res,next)=>{
-    try{
+const updateTransaction= catchAsyncError(async (req,res,next)=>{
+    // try{
         const id =req.params.id
         var transaction =await Transaction.findOne({where:{id}})
         if (!transaction)
@@ -110,14 +108,13 @@ const updateTransaction= async (req,res,next)=>{
             }else{
                 res.status(StatusCodes.BAD_REQUEST).json({message:"invalid data of payamount and balance"}) 
             }
-    } catch (error) {
-        next(new AppError('error server ',500))
-        // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-    }
-}
+    // } catch (error) {
+    //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
+    // }
+})
 
-const deleteTransaction= async (req,res,next)=>{
-   try {
+const deleteTransaction= catchAsyncError(async (req,res,next)=>{
+//    try {
         const id=req.params.id ;
         var transaction =await Transaction.findOne({where:{id}})
         if (!transaction)
@@ -130,54 +127,9 @@ const deleteTransaction= async (req,res,next)=>{
             },
         })
         res.status(StatusCodes.OK).json({message:"success",result:transactioDeleted})
-   } catch (error) {
-    next(new AppError('error server ',500))    
+//    } catch (error) {
     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
-   }
-}
+//    }
+})
 
 module.exports={getAllTransactions , addTransaction , updateTransaction , deleteTransaction}
-
-
-/*const getAllMainFields = async (req, res) => {
-    const { body } = req
-    const indexInputs = await global.helpers.validateInputs.validate(res, indexSchema, body);
-    const filterObj = {
-        where: {},
-        limit: indexInputs.limit || 10,
-    }
-    if (indexInputs.offset) {
-        filterObj['offset'] = indexInputs.offset * filterObj.limit;
-    }
-    if (indexInputs.orderBy) {
-        filterObj['order'] = [
-            [indexInputs.orderBy.coulmn, indexInputs.orderBy.type],
-        ];
-    }
-    if(indexInputs.active !=undefined){
-        filterObj.where.active = indexInputs.active 
-    }
-    if (indexInputs.search) {
-        filterObj.where[Op.or] =[
-                        {nameEn: { [Op.like]: `%${indexInputs.search}%` }},
-                        {name: { [Op.like]: `%${indexInputs.search}%` }}
-                        ]
-    }
-            const where = {
-            from: {
-                $between: [startDate, endDate]
-            }
-        }
-
-       var startedDate= new Date("2020-12-12 00:00:00");
-       var  endDate= new Date("2020-12-26 00:00:00");
-    if(indexInputs.date){
-         filterObj.where[createdAt] ={
-            [Op.between] : [startedDate , endDate ]
-         }
-    }
-
-    const mainFields = await global.db.main_field.findAndCountAll(filterObj);
-    return appConfig.send(res, 'ok', mainFields);
-} 
-{"limit":2,"offset":0,"customer_id":1,"admin_id":1} */

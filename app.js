@@ -1,3 +1,9 @@
+// handle syntax error 
+process.on('uncaughtException',err=>{
+    console.log(err);
+})
+
+
 const express= require("express");
 require("dotenv").config();
 const createTable = require("./modules");
@@ -16,14 +22,7 @@ const AppError = require("./helpers/AppError");
 
  const app =express();
 app.use(express.json());
-// Customer.associate=()=>{
-//     Customer.belongsTo(User, {
-//         as: 'admin',
-//         foreignKey: 'admin_id',
-    
-//       });
 
-// }
     User.hasMany(Customer,{
         foreignKey :'admin_id'
     })
@@ -72,7 +71,10 @@ app.use((error , req ,res , next)=>{
 app.listen(port, () => {   
     console.log(`Server started on port ${port}`);
 });
-     
+// handle outside express
+process.on('unhandledRejection',err=>{
+    console.log('unhandledRejection',err);
+})     
   
 
 
