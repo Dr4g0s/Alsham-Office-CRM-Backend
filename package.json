@@ -20,7 +20,8 @@
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.0",
-    "sequelize": "^6.6.5"
+    "sequelize": "^6.6.5",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

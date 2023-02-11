@@ -6,6 +6,9 @@ const { StatusCodes } = require("http-status-codes");
 const jwt = require("jsonwebtoken");
 const AppError = require("../../../helpers/AppError");
 const { catchAsyncError } = require("../../../helpers/catchSync");
+const LoggerService = require("../../../services/logger.service");
+
+const logger=new LoggerService('user.controller')
 
 // function  catchAsyncError(fun){
 //     return (req,res,next)=>{
@@ -20,11 +23,12 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 // get all users
 const getAllUsers=catchAsyncError(async(req,res,next)=>{
     // try {
-        const users=await  User.findAndCountAll({
+        const users=await  User.findAndCosuntAll({
             where:{company_id:req.loginData.company_id},
             include:Customer,
             attributes : {exclude : ['password']}
         });
+        logger.error('return  user list',users )
         res.status(StatusCodes.OK).json({message:"succes",users})
     // } catch (error) {
     //     next(new AppError('server Error',500))

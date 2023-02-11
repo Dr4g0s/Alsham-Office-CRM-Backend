@@ -1,9 +1,10 @@
 // handle syntax error 
 process.on('uncaughtException',err=>{
+    logger.error(`uncaughtException`,err)
     console.log(err);
 })
 
-
+// winston
 const express= require("express");
 require("dotenv").config();
 const createTable = require("./modules");
@@ -19,9 +20,17 @@ const Company = require("./modules/companies/model/company.model");
 const Transaction = require("./modules/transactions/model/transaction.model");
 const Service = require("./modules/services/model/service.model");
 const AppError = require("./helpers/AppError");
+const winston = require("winston/lib/winston/config");
+const LoggerService = require("./services/logger.service");
 
  const app =express();
 app.use(express.json());
+
+// wiston
+const logger=new LoggerService('user.controller')
+const loggerError=new LoggerService('error.general')
+const loggerRoute=new LoggerService('error.route')
+
 
     User.hasMany(Customer,{
         foreignKey :'admin_id'
@@ -58,6 +67,7 @@ app.use('/api/v1',companyRoutes)
 // handle wronge routes 
 app.all("*",(req,res,next)=>{
     // res.json(`can not find this route : ${req.originalUrl} on serve `)
+    loggerRoute.error(`can not find this route : ${req.originalUrl} on serve`)
     next(new AppError(`can not find this route : ${req.originalUrl} on serve `,404))
 })
 
@@ -65,9 +75,11 @@ app.all("*",(req,res,next)=>{
 app.use((error , req ,res , next)=>{
     error.statusCode=error.statusCode || 500
     if (process.env.MODE_ENV === 'DEVELOP') {
+        loggerError.error(`error`,{status:error.statusCode,message:error.message,error,stack:error.stack})
         res.status(error.statusCode)
         .json({status:error.statusCode,message:error.message,error,stack:error.stack})
     }else{
+        loggerError.error(`error`,{status:error.statusCode,message:error.message,error,stack:error.stack})
         res.status(error.statusCode)
         .json({status:error.statusCode,message:error.message,error})
     }
