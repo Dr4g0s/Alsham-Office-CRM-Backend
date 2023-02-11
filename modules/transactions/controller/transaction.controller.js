@@ -12,12 +12,14 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 const getAllTransactions=catchAsyncError(async(req,res,next)=>{
     const indexInputs =  req.body ;
     const filterObj = {
-        where: {company_id:req.loginData.company_id},
+        where: {},
         limit: indexInputs.limit || 10,
     }
     if (indexInputs.offset) { 
         filterObj['offset'] = indexInputs.offset * filterObj.limit;
     }
+    
+    filterObj.where['company_id'] =req.loginData.company_id
     // if (indexInputs.orderBy) {
         filterObj['order'] = [
             [indexInputs?.orderBy?.coulmn|| 'createdAt', indexInputs?.orderBy?.type || 'DESC'],

@@ -32,6 +32,9 @@ app.use(express.json());
     Company.hasMany(Transaction,{
         foreignKey : 'company_id'
     })
+    Company.hasMany(Customer,{
+        foreignKey : 'company_id'
+    })
     Transaction.belongsTo(User, {
         foreignKey: 'admin_id',
       });
@@ -41,6 +44,7 @@ app.use(express.json());
       Transaction.belongsTo(Service, {
         foreignKey: 'service_id',
       });
+    
  
 app.use(cookieParser());
 createTable();

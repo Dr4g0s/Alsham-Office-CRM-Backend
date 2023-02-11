@@ -5,7 +5,7 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 
 const getAllcompanys=catchAsyncError(async(req,res,next)=>{
     // try {
-        var companys=await Company.findffAndCountAll()
+        var companys=await Company.findAndCountAll()
         res.status(StatusCodes.OK).json({message:"success",result:companys})
         
     // } catch (error) {

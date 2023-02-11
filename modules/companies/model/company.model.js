@@ -1,7 +1,7 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../../../configrations/sequelize");
-const Transaction = require("../../transactions/model/transaction.model");
-const User = require("../../users/model/user.model");
+const Customer = require("../../customers/model/customer.model");
+
 
 const Company =sequelize.define('company',{
     id:{
@@ -20,6 +20,7 @@ const Company =sequelize.define('company',{
     }
 });
 
+   
 
 
 module.exports=Company ;

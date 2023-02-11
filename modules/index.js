@@ -9,4 +9,4 @@ const createTable=()=>{
         console.log("err");
     })  
 }
-module.exports=createTable;     
+module.exports=createTable;        
