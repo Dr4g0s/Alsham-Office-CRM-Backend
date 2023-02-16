@@ -1,6 +1,5 @@
 // handle syntax error 
 process.on('uncaughtException',err=>{
-    logger.error(`uncaughtException`,err)
     console.log(err);
 })
 
@@ -22,8 +21,10 @@ const Service = require("./modules/services/model/service.model");
 const AppError = require("./helpers/AppError");
 const winston = require("winston/lib/winston/config");
 const LoggerService = require("./services/logger.service");
+var cors = require('cors')
 
- const app =express();
+const app =express();
+app.use(cors())
 app.use(express.json());
 
 // wiston
