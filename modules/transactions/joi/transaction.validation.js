@@ -45,7 +45,7 @@ module.exports = {
             customer_id : Joi.number(),
             admin_id : Joi.number(),
             startedDate : Joi.date().iso(),
-            endDate : Joi.date().iso().greater(Joi.ref('startedDate')),
+            endDate : Joi.date().iso().min(Joi.ref('startedDate')),
             active : Joi.boolean(),
             date :Joi.boolean(),
             company_id : Joi.number()

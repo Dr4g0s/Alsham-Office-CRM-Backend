@@ -32,16 +32,19 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
         filterObj.where.admin_id = indexInputs.admin_id 
     }
     var startedDate=indexInputs.startedDate? new Date(indexInputs.startedDate) : new Date("2020-12-12 00:00:00");
-    var  endDate=indexInputs.endDate? indexInputs.endDate : new Date();
-    if(indexInputs.date){
+    // date.setHours(date.getHours() + hours)
+    let date=new Date(indexInputs.endDate)
+    var  endDate=indexInputs.endDate? date.setHours(date.getHours() + 24) : new Date();
+    if(indexInputs.startedDate || indexInputs.endDate){
         filterObj.where["createdAt"] ={
-             [Op.between] : [startedDate , endDate ]
+             [Op.between] : [startedDate , endDate]
         }   
     }
  
     filterObj.where.active = indexInputs.active? indexInputs.active : true
 
     // try {
+        console.log(filterObj.where);
         var transactions=await Transaction.findAndCountAll({
             ...filterObj
             ,include:[ {model:User,attributes: ['name', "id"]},

@@ -2,10 +2,13 @@ const Service = require("../model/service.model");
 const { StatusCodes } = require("http-status-codes");
 const AppError = require("../../../helpers/AppError");
 const { catchAsyncError } = require("../../../helpers/catchSync");
+const { Op , Sequelize} = require("sequelize");
 
 const getAllservices=catchAsyncError(async(req,res,next)=>{
     // try {
-        var services=await Service.findAndCountAll()
+        var services=await Service.findAndCountAll({where :{active:true},order:[
+            ['createdAt', 'DESC']
+        ]})
         res.status(StatusCodes.OK).json({message:"success",result:services})
         
     // } catch (error) {
@@ -63,13 +66,29 @@ const deleteService= catchAsyncError(async (req,res,next)=>{
 
 // search
 const searchservices=catchAsyncError(async(req,res,next)=>{
-    // try {
-            let {searchKey}=req.query;
-            if(searchKey){
-            let services= await Service.findAll({where:{name:{[Op.like]: `%${searchKey}%`}}});
+            let indexInputs=req.query;
+            console.log( 'line 70',indexInputs);
+            const filterObj = {
+                where: {},
+            }
+                filterObj['order'] = [
+                    [ 'createdAt',  'DESC'],
+                ];
+                if(indexInputs.name){
+                    filterObj.where["name"] ={
+                         [Op.like] :`%${indexInputs.name}%`
+                    }   
+                }
+                if(indexInputs.active ==0 || indexInputs.active ==1){
+                    filterObj.where["active"] =indexInputs.active
+                }
+            if(filterObj.where.name || filterObj.where.active== 0|| filterObj.where.active==1 ){
+            let services= await Service.findAll({...filterObj});
                 res.status(StatusCodes.OK).json({message:"success",services})
             }else{
-            let services= await Customer.findAll({});
+            let services= await Service.findAll({order:[
+                ['createdAt', 'DESC']
+            ]});
             res.status(StatusCodes.OK).json({message:"success",services})
             }
     // } catch (error) {

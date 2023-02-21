@@ -6,7 +6,11 @@ const { catchAsyncError } = require("../../../helpers/catchSync");
 
 const getAllCustomers=catchAsyncError(async(req,res,next)=>{
         // try{
-            var customers=await Customer.findAndCountAll({ where:{company_id:req.loginData.company_id},include:User})
+            var customers=await Customer.findAndCountAll({ where:{company_id:req.loginData.company_id ,active:true}
+                ,order:[
+                    ['createdAt', 'DESC'],
+                    ['name', 'ASC'],
+                ],include:User})
             res.status(StatusCodes.OK).json({message:"success",result:customers})
 
         // } catch (error) {
@@ -69,12 +73,16 @@ const searchCustomers=catchAsyncError(async(req,res,next)=>{
     // try{
         let {searchKey}=req.query;
         if(searchKey){
-            let customers= await Customer.findAll({where:{name:{[Op.like]: `%${searchKey}%`,company_id:req.loginData.company_id}}});
-            res.status(StatusCodes.OK).json({message:"success",customers})
+            let customers= await Customer.findAll({where:{name:{[Op.like]: `%${searchKey}%`,company_id:req.loginData.company_id}}
+            ,order:[
+                ['createdAt', 'DESC'],
+                ['name', 'ASC'],
+            ]});
+            res.status(StatusCodes.OK).json({message:"success",result:customers})
         }else{
             let customers= await Customer.findAll({});
-           res.status(StatusCodes.OK).json({message:"success",customers})
-        }
+           res.status(StatusCodes.OK).json({message:"success",result:customers})
+        }    
         
     // } catch (error) {
     //    next(new AppError('error server ',500))

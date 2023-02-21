@@ -37,7 +37,7 @@ const loggerRoute=new LoggerService('error.route')
         foreignKey :'admin_id'
     })
     Company.hasMany(User,{
-        foreignKey : 'company_id'
+        foreignKey : 'company_id' 
     })
     Company.hasMany(Transaction,{
         foreignKey : 'company_id'

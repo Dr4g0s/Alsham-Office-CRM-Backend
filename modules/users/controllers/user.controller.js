@@ -23,7 +23,7 @@ const logger=new LoggerService('user.controller')
 // get all users
 const getAllUsers=catchAsyncError(async(req,res,next)=>{
     // try {
-        const users=await  User.findAndCosuntAll({
+        const users=await  User.findAndCountAll({
             where:{company_id:req.loginData.company_id},
             include:Customer,
             attributes : {exclude : ['password']}
