@@ -40,8 +40,9 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
              [Op.between] : [startedDate , endDate]
         }   
     }
- 
-    filterObj.where.active = indexInputs.active? indexInputs.active : true
+    if (indexInputs.active ==true ||indexInputs.active ==false ) {
+        filterObj.where.active = indexInputs.active ;
+    }
 
     // try {
         console.log(filterObj.where);
@@ -75,6 +76,16 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
                 ],
                 [
                     Sequelize.fn('sum', Sequelize.col('balanceDue')), 'balanceDue'
+                ],
+                [
+                    Sequelize.fn('sum', Sequelize.col('quantity')), 'quantity'
+                ],
+                [
+                    Sequelize.fn(
+                        'SUM',
+                              Sequelize.where(Sequelize.col('price'), '*', Sequelize.col('quantity'))
+                            ),
+                            'total_price_without_profite'
                 ]
             ],
         })

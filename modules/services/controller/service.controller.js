@@ -3,6 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 const AppError = require("../../../helpers/AppError");
 const { catchAsyncError } = require("../../../helpers/catchSync");
 const { Op , Sequelize} = require("sequelize");
+const Transaction = require("../../transactions/model/transaction.model");
 
 const getAllservices=catchAsyncError(async(req,res,next)=>{
     // try {
@@ -30,6 +31,10 @@ const addService=catchAsyncError(async (req,res,next)=>{
 const updateService= catchAsyncError(async (req,res,next)=>{
     // try {
         const id =req.params?.id
+        var x= await Service.findOne({where:{id}})
+        if (!x)
+        next(new AppError('invalid id service',400))
+
         var service =await Service.update(req.body,{where:{id}})
         if (!service)
         next(new AppError("this id not valid",400))
@@ -45,19 +50,22 @@ const updateService= catchAsyncError(async (req,res,next)=>{
 const deleteService= catchAsyncError(async (req,res,next)=>{
 //    try {
         const id=req.params.id ;
-        var service =await Service.update(req.body,{where:{id}})
-        if (!service)
-        next(new AppError("this id not valid",400))
+        var x= await Service.findOne({where:{id}})
+        if (!x)
+        next(new AppError('invalid id service',400))
 
-        var service =await Service.destroy({
-            where :{
-                id
-            },
-        })
-        if (!service)
-        next(new AppError("this id not valid",400))
-
-        res.status(StatusCodes.OK).json({message:"success",result:service})
+        var transaction = await Transaction.findOne({where:{service_id:id}})
+        if (!transaction) {
+            var service =await Service.destroy({
+                where :{
+                    id
+                },
+            })
+            res.status(StatusCodes.OK).json({message:"success",result:service})
+        } else {
+            next(new AppError("failed delte this service type contains transactions must delete these are transactions  can you deactive this service",403))
+            // res.status(StatusCodes.FORBIDDEN).json({message:"failed delte this service type contains transactions must delete these are transactions"})
+        }
 //    } catch (error) {
 //     next(new AppError('error server ',500))    
 //     // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message : 'error' , error})
