@@ -12,7 +12,8 @@ module.exports = {
             phoneNo :Joi.number(),
             active : Joi.boolean(),
             company_id:Joi.number().required().min(0),
-            admin_id:Joi.number().required().min(0)
+            admin_id:Joi.number().required().min(0),
+            deposite : Joi.number().default(0)
         })
     },
     updateCustomerSchema:{
@@ -28,7 +29,8 @@ module.exports = {
             }),
             phoneNo :Joi.number(),
             active : Joi.boolean(),
-            company_id:Joi.number().required().min(0)
+            company_id:Joi.number().required().min(0),
+            deposite : Joi.number()
         }).min(1)
     }
 }

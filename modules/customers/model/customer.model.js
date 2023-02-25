@@ -21,6 +21,10 @@ const Customer =sequelize.define('customer',{
         type:Sequelize.INTEGER ,
         unique : true
     },
+    deposite:{
+        type:Sequelize.INTEGER ,
+        defaultValue:0 
+    },
     active:{
         type: Sequelize.BOOLEAN,
         defaultValue: true,
