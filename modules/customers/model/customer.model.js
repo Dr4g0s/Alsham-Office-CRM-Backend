@@ -15,11 +15,9 @@ const Customer =sequelize.define('customer',{
     email:{
         type:Sequelize.STRING,
         allowNull:true ,
-        unique : true
     },
     phoneNo:{
         type:Sequelize.INTEGER ,
-        unique : true
     },
     deposite:{
         type:Sequelize.INTEGER ,
