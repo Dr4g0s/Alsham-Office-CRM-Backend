@@ -43,6 +43,9 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
     if (indexInputs.active ==true ||indexInputs.active ==false ) {
         filterObj.where.active = indexInputs.active ;
     }
+    if (indexInputs.balanceDue ) {
+        filterObj.where.balanceDue = {[Op.gte] :indexInputs.balanceDue} ;
+    }
 
     // try {
         console.log(filterObj.where);
@@ -98,6 +101,7 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
 const addTransaction=catchAsyncError(async (req,res,next)=>{ 
     // try{
         if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
+            
             var transaction = await Transaction.create(req.body);
             res.status(StatusCodes.CREATED).json({message:"success",result:transaction})
         }else{

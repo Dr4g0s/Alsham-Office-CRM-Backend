@@ -47,6 +47,7 @@ module.exports = {
             startedDate : Joi.date().iso(),
             endDate : Joi.date().iso().min(Joi.ref('startedDate')),
             active : Joi.boolean(),
+            balanceDue : Joi.number(),
             date :Joi.boolean(),
             company_id : Joi.number()
         }).min(1)
