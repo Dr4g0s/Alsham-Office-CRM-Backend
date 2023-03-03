@@ -120,8 +120,8 @@ const updateTransaction= catchAsyncError(async (req,res,next)=>{
         if (!transaction)
             next(new AppError("this id not valid",400))
             // res.status(StatusCodes.BAD_REQUEST).json({message:"this id not valid"}) 
-
-            if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
+            console.log(transaction.dataValues);
+            if ((req.body.paymentAmount + req.body.balanceDue) == ((transaction.dataValues.price + transaction.dataValues.profite)*transaction.dataValues.quantity)) {
 
                 var transactionUpdated =await Transaction.update(req.body,{where:{id}})
                 res.status(StatusCodes.OK).json({message:"success",result:transactionUpdated})

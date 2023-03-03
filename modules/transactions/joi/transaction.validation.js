@@ -26,11 +26,11 @@ module.exports = {
             id : Joi.number().required()
         }),
         body:Joi.object().required().keys({
-            paymentAmount : Joi.number().required(),
-            balanceDue : Joi.number().required(),
-            price : Joi.number().required(),
-            profite : Joi.number().required(),
-            quantity : Joi.number().default(1).required(),
+            paymentAmount : Joi.number(),
+            balanceDue : Joi.number(),
+            price : Joi.number(),
+            profite : Joi.number(),
+            quantity : Joi.number().default(1),
             admin_id : Joi.number(),
             customer_id : Joi.number(),
             service_id : Joi.number(),
