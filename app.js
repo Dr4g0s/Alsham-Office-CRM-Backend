@@ -85,7 +85,7 @@ app.use((error , req ,res , next)=>{
         .json({status:error.statusCode,message:error.message,error})
     }
 })
-app.listen(port, () => {   
+app.listen(process.env.PORT||3000, () => {   
     console.log(`Server started on port ${port}`);
 });
 // handle outside express
