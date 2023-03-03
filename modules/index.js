@@ -6,7 +6,8 @@ const createTable=()=>{
         ).then((result)=>{
         console.log("connection success");
     }).catch((err)=>{
-        console.log("err");
+        console.log("err",err);
+        
     })  
 }
 module.exports=createTable;        
