@@ -45,6 +45,9 @@ const loggerRoute=new LoggerService('error.route')
     Company.hasMany(Customer,{
         foreignKey : 'company_id'
     })
+    Customer.hasMany(Transaction,{
+        foreignKey : 'customer_id'
+    })
     Transaction.belongsTo(User, {
         foreignKey: 'admin_id',
       });

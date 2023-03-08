@@ -105,7 +105,7 @@ const searchCustomers = catchAsyncError(async (req, res, next) => {
     }
 
     if (filterObj.where.name || filterObj.where.active == 0 || filterObj.where.active == 1) {
-        let customers = await Customer.findAll({ ...filterObj });
+        let customers = await Customer.findAll({ ...filterObj   ,include:[ {model:Transaction,attributes: ['paymentAmount', "id"]}],});
         res.status(StatusCodes.OK).json({ message: "success", result: customers })
     } else {
         let customers = await Customer.findAll({
