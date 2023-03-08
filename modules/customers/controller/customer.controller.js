@@ -46,8 +46,15 @@ const updateCustomer = catchAsyncError(async (req, res, next) => {
     var x = await Customer.findOne({ where: { id } })
     if (!x)
         next(new AppError('invalid id customer', 400))
+        var updateData={} ;
+        var {name,...rest}=req.body
+        if (x.dataValues.name=="petty Cash") {
+            updateData={...rest}
+        }else{
+            updateData={...req.body}
+        }
 
-    var customer = await Customer.update(req.body, { where: { id } })
+    var customer = await Customer.update(updateData, { where: { id } })
     res.status(StatusCodes.OK).json({ message: "success", result: customer })
     // } catch (error) {
     //    next(new AppError('error server ',500))
@@ -100,6 +107,7 @@ const searchCustomers = catchAsyncError(async (req, res, next) => {
             [Op.like]: `%${indexInputs.name}%`
         }
     }
+    filterObj.where['company_id'] =req.loginData.company_id
     if (indexInputs.active == 0 || indexInputs.active == 1) {
         filterObj.where["active"] = indexInputs.active
     }
@@ -109,6 +117,9 @@ const searchCustomers = catchAsyncError(async (req, res, next) => {
         res.status(StatusCodes.OK).json({ message: "success", result: customers })
     } else {
         let customers = await Customer.findAll({
+            where: {
+                company_id: req.loginData.company_id
+              },
             order: [
                 ['createdAt', 'DESC']
             ]
