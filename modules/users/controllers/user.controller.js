@@ -28,7 +28,7 @@ const getAllUsers=catchAsyncError(async(req,res,next)=>{
             include:Customer,
             attributes : {exclude : ['password']}
         });
-        logger.error('return  user list',users )
+        // logger.error('return  user list',users )
         res.status(StatusCodes.OK).json({message:"succes",users})
     // } catch (error) {
     //     next(new AppError('server Error',500))

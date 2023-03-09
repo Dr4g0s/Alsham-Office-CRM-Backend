@@ -6,7 +6,10 @@ const { Op , Sequelize} = require("sequelize");
 const { StatusCodes } = require("http-status-codes");
 const AppError = require("../../../helpers/AppError");
 const { catchAsyncError } = require("../../../helpers/catchSync");
+const LoggerService = require("../../../services/logger.service");
+const HistoryTransactions = require("../../historyTransaction/model/history.transactions.model");
 
+const logger=new LoggerService('transaction.controller')
 
 
 const getAllTransactions=catchAsyncError(async(req,res,next)=>{
@@ -53,7 +56,8 @@ const getAllTransactions=catchAsyncError(async(req,res,next)=>{
             ...filterObj
             ,include:[ {model:User,attributes: ['name', "id"]},
                         {model:Customer,attributes: ['name', "id"]},
-                        {model:Service,attributes: ['name', "id","desc"]}
+                        {model:Service,attributes: ['name', "id","desc"]},
+                        {model:HistoryTransactions,attributes:["details","id","createdAt","transaction_id","company_id"]}
                     ]
         })
         var transactionsInfo=await Transaction.findAll({
@@ -103,7 +107,11 @@ const addTransaction=catchAsyncError(async (req,res,next)=>{
         if ((req.body.paymentAmount + req.body.balanceDue) == ((req.body.price + req.body.profite)*req.body.quantity)) {
             
             var transaction = await Transaction.create(req.body);
-            res.status(StatusCodes.CREATED).json({message:"success",result:transaction})
+                // add history transaction
+                let date=new Date()
+                var historyTransaction=await HistoryTransactions.create({details:`the fist payment Amount  = ${transaction.dataValues.paymentAmount} at ${date.toLocaleDateString()} ${date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds()}`,transaction_id:transaction.dataValues.id,company_id:req.loginData.company_id})
+
+            res.status(StatusCodes.CREATED).json({message:"success",result:transaction ,historyTransaction:historyTransaction})
         }else{
             res.status(StatusCodes.BAD_REQUEST).json({message:"invalid data of payamount and balance"}) 
         }
@@ -124,7 +132,11 @@ const updateTransaction= catchAsyncError(async (req,res,next)=>{
             if ((req.body.paymentAmount + req.body.balanceDue) == ((transaction.dataValues.price + transaction.dataValues.profite)*transaction.dataValues.quantity)) {
 
                 var transactionUpdated =await Transaction.update(req.body,{where:{id}})
-                res.status(StatusCodes.OK).json({message:"success",result:transactionUpdated})
+                let date=new Date()
+                logger.info(`Last_P = ${transaction.dataValues.paymentAmount} and New_P = ${req.body.paymentAmount-transaction.dataValues.paymentAmount} the total payment = ${req.body.paymentAmount} at ${date.toLocaleDateString()} ` )
+                // add history transaction
+                var historyTransaction=await HistoryTransactions.create({details:`Last_P = ${transaction.dataValues.paymentAmount} and New_P = ${req.body.paymentAmount-transaction.dataValues.paymentAmount} the total payment = ${req.body.paymentAmount} at ${date.toLocaleDateString()} ${date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds()}`,transaction_id:id,company_id:req.loginData.company_id})
+                res.status(StatusCodes.OK).json({message:"success",result:transactionUpdated,historyTransaction:historyTransaction})
             }else{
                 res.status(StatusCodes.BAD_REQUEST).json({message:"invalid data of payamount and balance"}) 
             }

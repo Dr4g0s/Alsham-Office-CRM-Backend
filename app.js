@@ -21,7 +21,9 @@ const Service = require("./modules/services/model/service.model");
 const AppError = require("./helpers/AppError");
 const winston = require("winston/lib/winston/config");
 const LoggerService = require("./services/logger.service");
-var cors = require('cors')
+var cors = require('cors');
+const HistoryTransactions = require("./modules/historyTransaction/model/history.transactions.model");
+const historyTransactionsRoutes = require("./modules/historyTransaction/routes/history.transactions.routes");
 
 const app =express();
 app.use(cors())
@@ -48,15 +50,27 @@ const loggerRoute=new LoggerService('error.route')
     Customer.hasMany(Transaction,{
         foreignKey : 'customer_id'
     })
+    Transaction.hasMany(HistoryTransactions,{
+        foreignKey : 'transaction_id'
+    })
+    Company.hasMany(HistoryTransactions,{
+        foreignKey : 'company_id'
+    })
     Transaction.belongsTo(User, {
         foreignKey: 'admin_id',
       });
-      Transaction.belongsTo(Customer, {
+    HistoryTransactions.belongsTo(Transaction, {
+        foreignKey: 'transaction_id',
+    });
+    HistoryTransactions.belongsTo(Company, {
+        foreignKey: 'company_id',
+    });
+    Transaction.belongsTo(Customer, {
         foreignKey: 'customer_id',
-      });
-      Transaction.belongsTo(Service, {
+    });
+    Transaction.belongsTo(Service, {
         foreignKey: 'service_id',
-      });
+    });
     
  
 app.use(cookieParser());
@@ -67,6 +81,7 @@ app.use('/api/v1',customersRoutes);
 app.use('/api/v1',servicesRoutes);
 app.use('/api/v1',transactionsRoutes);
 app.use('/api/v1',companyRoutes)
+app.use('/api/v1',historyTransactionsRoutes)
 
 // handle wronge routes 
 app.all("*",(req,res,next)=>{
