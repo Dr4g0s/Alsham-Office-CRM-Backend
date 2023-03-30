@@ -24,6 +24,8 @@ const LoggerService = require("./services/logger.service");
 var cors = require('cors');
 const HistoryTransactions = require("./modules/historyTransaction/model/history.transactions.model");
 const historyTransactionsRoutes = require("./modules/historyTransaction/routes/history.transactions.routes");
+const remindersRoutes = require("./modules/reminder/routes/reminder.route");
+const Reminder = require("./modules/reminder/model/reminder.model");
 
 const app =express();
 app.use(cors())
@@ -71,17 +73,21 @@ const loggerRoute=new LoggerService('error.route')
     Transaction.belongsTo(Service, {
         foreignKey: 'service_id',
     });
+    Reminder.belongsTo(Service, {
+        foreignKey: 'service_id',
+    });
     
  
 app.use(cookieParser());
 createTable();
 const port=process.env.PORT ;
-app.use('/api/v1',userRoutes);
+app.use('/api/v1',userRoutes);   
 app.use('/api/v1',customersRoutes);
 app.use('/api/v1',servicesRoutes);
 app.use('/api/v1',transactionsRoutes);
 app.use('/api/v1',companyRoutes)
 app.use('/api/v1',historyTransactionsRoutes)
+app.use('/api/v1',remindersRoutes)
 
 // handle wronge routes 
 app.all("*",(req,res,next)=>{

@@ -37,10 +37,14 @@ const Transaction =sequelize.define('transaction',{
       get() {
         return (+this.price + +this.profite)* +this.quantity;
       }  
-    },
+    },  
     active:{
         type: Sequelize.BOOLEAN,
         defaultValue: true,
+    },
+    sponsoredName : {
+        type : Sequelize.STRING,
+        allowNull:true 
     }
 });
       // Transaction.belongsTo(User, {

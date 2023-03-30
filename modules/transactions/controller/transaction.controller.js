@@ -13,7 +13,6 @@ const logger=new LoggerService('transaction.controller')
 
 
 const getAllTransactions=catchAsyncError(async(req,res,next)=>{
-    console.log("tesssssssssssssssssssstttttttttttttttttttttt");
     const indexInputs =  req.body ;
     const filterObj = {
         where: {},

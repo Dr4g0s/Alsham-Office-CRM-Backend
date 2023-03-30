@@ -12,6 +12,7 @@ module.exports = {
             customer_id : Joi.number().required(),
             service_id : Joi.number().required(),
             company_id : Joi.number().min(1) ,
+            sponsoredName : Joi.string(),
             active : Joi.boolean().default(true),
         })
     },
@@ -34,7 +35,7 @@ module.exports = {
             admin_id : Joi.number(),
             customer_id : Joi.number(),
             service_id : Joi.number(),
-            
+            sponsoredName : Joi.string(),
             active : Joi.boolean(),
         }).min(1)
     },
