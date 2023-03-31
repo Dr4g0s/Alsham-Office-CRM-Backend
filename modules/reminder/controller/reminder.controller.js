@@ -17,13 +17,54 @@ const getAllReminders = catchAsyncError(async (req, res, next) => {
     filterObj['order'] = [
         [indexInputs?.orderBy?.coulmn || 'dateExpire', indexInputs?.orderBy?.type || 'DESC'],
     ];
-    var reminders = await Reminder.findAndCountAll(
-       { ...filterObj
-        ,include:[{model:Service,attributes: ['name', "id"]},]
+    var dateExpire=indexInputs?.dateExpire ? new Date(indexInputs?.dateExpire) : new Date();
+    var date2=new Date()
+    // let date=new Date(indexInputs.dateExpire);
+    // var  endDate=date.setHours(date.getHours() + 23) ;
+    // if(indexInputs.dateExpire ){
+        filterObj.where["dateExpire"] ={
+             [Op.between] : [dateExpire , dateExpire]
         }
-    )
-    res.status(StatusCodes.OK).json({ message: "success", result: reminders })
+    // }
+    const reminders = await Reminder.findAll(
+        { ...filterObj
+            ,include:[{model:Service,attributes: ['name', "id"]},] 
+            }
+    );
+
+    if (dateExpire.getFullYear() === date2.getFullYear()
+        && dateExpire.getMonth() === date2.getMonth()
+        && dateExpire.getDate() === date2.getDate()) {
+        console.log('The two dates are on the same day.');
+            await Reminder.update({ status:'pending' }, { where:
+                {
+            dateExpire: {
+                [Op.between]: [dateExpire, dateExpire],
+                        }
+            }
+            });
+        } else {
+            console.log('The two dates are not on the same day.');
+        }
+
+
+
+
+    filterObj.where={ [Op.or]:[ 
+    {dateExpire: { [Op.between]: [dateExpire, dateExpire]  }},
+    {status : 'pending'}
+                ]}
+
+
+    const updatedReminders = await Reminder.findAndCountAll({...filterObj
+        ,include:[{model:Service,attributes: ['name', "id"]},]});
+    res.status(StatusCodes.OK).json({ message: "success", result: {old:reminders,new:updatedReminders} })
 })
 
+const addReminder=catchAsyncError(async (req,res,next)=>{ 
+            console.log(req.body);
+            var reminder = await Reminder.create(req.body);
+            res.status(StatusCodes.CREATED).json({message:"success",result:reminder})
+})
 
-module.exports = { getAllReminders }
+module.exports = { getAllReminders , addReminder}
