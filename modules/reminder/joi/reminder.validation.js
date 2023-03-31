@@ -22,10 +22,10 @@ module.exports = {
             id : Joi.number().required()
         }),
         body:Joi.object().required().keys({
-            companyName : Joi.string().required(),
-            sponsored : Joi.string().required(),
-            message : Joi.string().required(),
-            status : Joi.string().required(),
+            companyName : Joi.string(),
+            sponsored : Joi.string(),
+            message : Joi.string(),
+            status : Joi.string(),
             service_id : Joi.number(),
             dateExpire : Joi.date().iso()
         }).min(1)

@@ -1,12 +1,12 @@
 const isAuth = require('../../../common/middleare/isAuth')
 const validationRequest = require('../../../common/middleare/validationRequest')
-const { getAllReminders, addReminder } = require('../controller/reminder.controller')
-const { getAllReminder, addReminderSchema } = require('../joi/reminder.validation')
+const { getAllReminders, addReminder, updateReminder } = require('../controller/reminder.controller')
+const { getAllReminder, addReminderSchema, updateReminderSchema } = require('../joi/reminder.validation')
 const remindersRoutes=require('express').Router()
 
 remindersRoutes.post('/allReminders',validationRequest(getAllReminder),getAllReminders) 
 remindersRoutes.post('/addReminder',validationRequest(addReminderSchema),addReminder)
-// remindersRoutes.put('/updateTransaction/:id',isAuth('ALL'),validationRequest(updateTransactionSchema),updateTransaction)
+remindersRoutes.put('/updateReminder/:id',validationRequest(updateReminderSchema),updateReminder)
 // remindersRoutes.patch('/deleteTransactionSoft/:id',isAuth('ALL'),deleteTransaction)
 // remindersRoutes.get('/searchTransaction',searchTransactions)
 

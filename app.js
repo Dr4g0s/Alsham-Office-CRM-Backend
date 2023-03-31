@@ -70,7 +70,7 @@ const loggerRoute=new LoggerService('error.route')
     Transaction.belongsTo(Customer, {
         foreignKey: 'customer_id',
     });
-    Transaction.belongsTo(Service, {
+    Transaction.belongsTo(Service, { 
         foreignKey: 'service_id',
     });
     Reminder.belongsTo(Service, {
