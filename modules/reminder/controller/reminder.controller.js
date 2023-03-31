@@ -28,7 +28,7 @@ const getAllReminders = catchAsyncError(async (req, res, next) => {
     // }
     const reminders = await Reminder.findAll(
         { ...filterObj
-            ,include:[{model:Service,attributes: ['name', "id"]},] 
+            ,include:[{model:Service,attributes: ['name', "id"]},]  
             }
     );
 
@@ -36,10 +36,11 @@ const getAllReminders = catchAsyncError(async (req, res, next) => {
         && dateExpire.getMonth() === date2.getMonth()
         && dateExpire.getDate() === date2.getDate()) {
         console.log('The two dates are on the same day.');
+        var oldDate=new Date("2010-12-12 00:00:00")
             await Reminder.update({ status:'pending' }, { where:
                 {
             dateExpire: {
-                [Op.between]: [dateExpire, dateExpire],
+                [Op.between]: [oldDate, dateExpire],
                         }
             }
             });
@@ -52,27 +53,8 @@ const getAllReminders = catchAsyncError(async (req, res, next) => {
     {status : 'pending'}
                 ]}
 
-
     const updatedReminders = await Reminder.findAndCountAll({...filterObj
-        ,include:[{model:Service,attributes: ['name', "id"]},]});
-    // test whats app message
-    // var unirest = require("unirest");
-
-    // var req = unirest("GET", "https://www.replier.net/sendMessage/");
-
-    // req.query({
-    // "instanceid": "132187",
-    // "token": "1fe076a5-4f59-469a-93cc-4dcfe7b348ac",
-    // "phone": "971568140062",
-    // "body": "hello zezo"
-    // });
-
-
-    // req.end(function (res) {
-    // if (res.error) throw new Error(res.error);
-
-    // console.log(res);
-    // });   
+        ,include:[{model:Service,attributes: ['name', "id"]},]});  
 
     res.status(StatusCodes.OK).json({ message: "success", result:updatedReminders })
 })
@@ -106,4 +88,17 @@ const updateReminder=catchAsyncError( async(req, res , next)=>{
     }
 })
 
-module.exports = { getAllReminders , addReminder , updateReminder}
+const deleteReminder=catchAsyncError(async(req,res,next)=>{
+            let id=req.params.id
+            var reminderX=await Reminder.findOne({where:{id}})
+            if (!reminderX)
+                next(new AppError('this id not exist ',400))
+            await Reminder.destroy({
+                where :{
+                    id
+                },
+            })
+            res.status(StatusCodes.OK).json({message:"deleted success"})
+    })
+
+module.exports = { getAllReminders , addReminder , updateReminder , deleteReminder}
