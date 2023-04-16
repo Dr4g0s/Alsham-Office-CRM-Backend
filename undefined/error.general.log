@@ -1,0 +1,2 @@
+4/2/2023, 9:39:25 PM | ERROR | errordate{"status":404,"message":"can not find this route : / on serve ","error":{"statusCode":404},"stack":"server error"} |
+4/2/2023, 9:39:25 PM | ERROR | errordate{"status":404,"message":"can not find this route : /favicon.ico on serve ","error":{"statusCode":404},"stack":"server error"} |
