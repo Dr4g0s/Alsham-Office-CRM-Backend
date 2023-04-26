@@ -28,28 +28,23 @@ services:
     container_name: phpmyadmin
     restart: always
     environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-      - PMA_USER=ahmed
-      - PMA_PASSWORD=0111@Ahmed
       - PMA_ARBITRARY=1
-      - APACHE_PORT=8090
+      - PMA_HOST=mysql
     ports:
-      - "8080:80"
+      - "8000:80"
     depends_on:
       - db
 
   nginx:
     image: nginx:latest
     container_name: nginx
-    # restart: always
+    restart: always
     ports:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - app
-      - phpmyadmin
 
 volumes:
   db_data:
