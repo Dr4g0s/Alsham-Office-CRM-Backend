@@ -19,7 +19,7 @@ services:
       MYSQL_USER: ahmed
       MYSQL_PASSWORD: 0111@Ahmed
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 
