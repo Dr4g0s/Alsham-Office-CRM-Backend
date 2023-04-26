@@ -32,6 +32,8 @@ services:
       - PMA_PORT=3306
       - PMA_USER=ahmed
       - PMA_PASSWORD=0111@Ahmed
+      - PMA_ARBITRARY=1
+      - APACHE_PORT=8090
     ports:
       - "8080:80"
     depends_on:
