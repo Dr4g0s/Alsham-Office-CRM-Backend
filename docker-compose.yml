@@ -26,8 +26,10 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: phpmyadmin
+    restart: always
     environment:
-      - PMA_HOST=db
+      - PMA_HOST=mysql
+      - PMA_PORT=3306
       - PMA_USER=ahmed
       - PMA_PASSWORD=0111@Ahmed
     ports:
@@ -45,6 +47,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - app
+      - phpmyadmin
 
 volumes:
   db_data:
