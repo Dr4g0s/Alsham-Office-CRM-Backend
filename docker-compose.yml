@@ -31,6 +31,8 @@ services:
     environment:
       - PMA_HOST=db
       - MYSQL_ROOT_PASSWORD=0111@Ahmed
+      - SERVER_NAME=164.92.200.16
+      - PMA_ABSOLUTE_URI=http://164.92.200.16:8000/
     volumes:
       - phpmyadmin_data:/sessions
     ports:
